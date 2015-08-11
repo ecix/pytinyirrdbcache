@@ -12,7 +12,6 @@ app = Flask(__name__)
 
 @app.route("/")
 def displayAPI():
-    #TODO: formating
     description = ""
     description += "<div style=\"margin-top: 20px;margin-bottom: 20px;\">an optimized whois cache for building bird configs</div>"
     description += ""
@@ -55,9 +54,6 @@ def retrievePrefixInformation(databaseName, macro, ipVersion):
     result["macros"] = list(result["macros"])
 
     data = json.dumps(result)
-
-    #TODO: remove after debugging
-    data = data.replace(" ","")
 
     resp = Response(data, status=200, mimetype='application/json')
     return resp
