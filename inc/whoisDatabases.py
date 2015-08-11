@@ -1,6 +1,16 @@
 import re
 import parser
 
+import sys
+import argparse
+argparser = argparse.ArgumentParser()
+argparser.add_argument('--config')
+result = argparser.parse_args(sys.argv[1:])
+if not getattr(result,"config"):
+    raise Exception("no config given")
+else:
+    configPath = result.config
+
 ###############################################################################
 # is a container for the individual whois databases
 ###############################################################################
@@ -9,7 +19,7 @@ class WhoisDatabaseContainer(object):
         self.databases = {}
 
         import json
-        configFile = open("config/whoisDatabases.json","r")
+        configFile = open(configPath,"r")
         config = json.load(configFile)
         configFile.close()
 
@@ -111,7 +121,6 @@ class WhoisDB(object):
         self.backup()
 
     def fetchSerial(self, url):
-        print(url)
         import urlparse
         parsedUrl = urlparse.urlparse(url)
         path = parsedUrl.path[1:parsedUrl.path.rfind("/")+1]
@@ -119,7 +128,6 @@ class WhoisDB(object):
 
         self.__rawNumber = ""
         def getNumber(chunk):
-            print(chunk)
             self.__rawNumber = self.__rawNumber + chunk
 
         import ftplib
@@ -288,7 +296,6 @@ class WhoisDB(object):
 
         fileName = "data/"+self.__name+".db.gz"
 
-        '''
         import ftplib
         fileHandle = open(fileName, 'wb')
         ftp = ftplib.FTP(parsedUrl.netloc)
@@ -297,7 +304,6 @@ class WhoisDB(object):
         ftp.retrbinary('RETR ' + filename, fileHandle.write)
         ftp.close()
         fileHandle.close()
-        '''
 
         print("parse file")
 
