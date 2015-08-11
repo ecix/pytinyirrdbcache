@@ -1,6 +1,61 @@
 import re
 
 ###############################################################################
+# helper function for validation of ip adresses
+# HACK: valdation through socket :-( but seems to be the best solution
+###############################################################################
+def isValidPrefix(prefix):
+
+    if not prefix:
+        return False
+
+    splited = prefix.split("/")
+    address = splited[0]
+    prefixLength = int(splited[1])
+
+    if not splited[1] == str(prefixLength):
+        return False
+
+    import socket
+    try:
+        socket.inet_pton(socket.AF_INET, address)
+        if prefixLength > 32:
+            return False
+        return True
+    except socket.error:
+        try:
+            socket.inet_pton(socket.AF_INET6, address)
+            if prefixLength > 128:
+                return False
+            return True
+        except socket.error:
+            return False
+
+###############################################################################
+# helper function for validation of ASNs
+###############################################################################
+def isValidASN(asn):
+    if not asn:
+        return
+    matched = re.search("^AS[0-9]*$",asn)
+    if matched:
+        return True
+    return False
+
+###############################################################################
+# helper function for validation of macros (AS-SET names)
+# HACK: doesn't operate to spec to keep old behaviour
+# proper regex would be ^AS-[0-9A-Z_-]*$
+###############################################################################
+def isValidMacro(macro):
+    if not macro:
+        return
+    matched = re.search("^AS[0-9A-Z:_-]*$", macro)
+    if matched:
+        return True
+    return False
+
+###############################################################################
 # reads the input database and discard everything not starting 
 # server as class to inherit from
 # can be used to ignore blocks
@@ -77,11 +132,15 @@ class AsSetPacketParser(PacketParser):
         tmp = re.sub('#.*','',tmp)
         tmp = tmp.upper()
 
-        #TODO: validate input!
+        self.__continuedMembers = False
+
+        # validate input
+        if not isValidMacro(tmp):
+            print("Macro: "+tmp+" is no valid macro")
+            return
 
         # store the name
         self.__macro = tmp
-        self.__continuedMembers = False
 
     ####################################################
     # gather the member contained in the body
@@ -108,10 +167,10 @@ class AsSetPacketParser(PacketParser):
             members = tmp.split(",")
             members = map(lambda x: x.strip(),members)
             members = map(lambda x: x.upper(),members)
-            members = filter(lambda x: x.startswith("AS"),members)
-            members = filter(lambda x: not x == "",members)
 
-            #TODO: validate input!
+            # validate input
+            members = filter(lambda x: isValidMacro(x) or isValidASN(x), 
+                             members)
 
             # store members
             self.__members = self.__members.union(members)
@@ -124,9 +183,6 @@ class AsSetPacketParser(PacketParser):
     def processPacket(self):
         # add the macro
         if self._mode == "ADD":
-            if not self.__macro.startswith("AS"):
-                print("???")
-                print(self.__macro)
             self.__macroStore[self.__macro] = self.__members
         # remove the macro
         elif self._mode == "REMOVE":
@@ -153,8 +209,12 @@ class RoutePacketParser(PacketParser):
         tmp = re.sub('^route6?: *','',line)
         tmp = re.sub(' *\n','',tmp)
         tmp = re.sub('#.*','',tmp)
+        tmp = tmp.strip()
 
-        #TODO: validate input!
+        # validate input
+        if not isValidPrefix(tmp):
+            print("Prefix: "+tmp+" is no valid prefix")
+            return
 
         # store the prefix
         self.__prefix = tmp
@@ -174,19 +234,22 @@ class RoutePacketParser(PacketParser):
             # postprocess the origin
             tmp = tmp.upper()
 
-            #TODO: validate input!
+            # validate input
+            if not isValidASN(tmp):
+                print("ASN: "+tmp+" is no valid ASN")
+                return
 
             # store the origin
             self.__origin = tmp
 
-            if not self.__origin.startswith("AS"):
-                print("!!!")
-                print(self.__origin)
-    
     ###########################################################################
     # change the prefixes
     ###########################################################################
     def processPacket(self):
+        #check if everything is complete
+        if not self.__origin or not self.__prefix:
+            return
+
         # create the origin if neccessary
         if not self.__origin in self.__asnBase:
             self.__asnBase[self.__origin] = set()
