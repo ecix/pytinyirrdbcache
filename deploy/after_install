@@ -1,0 +1,21 @@
+#!/bin/bash
+
+SERVICE=pytinyirrdcache
+
+echo "[i] Creating user and updating permissions"
+useradd --system -d /opt/pytinyirrdcache tiny_irrd
+
+echo "[i] Post install pytinyirrdcache"
+cd /opt/pytinyirrdcache && ./bin/venv_init
+
+echo "[i] Fixing permissions"
+chown -R tiny_irrd:tiny_irrd /opt/pytinyirrdcache
+
+
+#
+# Start server after upgrade
+#
+
+echo "[i] Starting $SERVICE"
+/sbin/start $SERVICE
+

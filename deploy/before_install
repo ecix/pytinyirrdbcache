@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#
+# Stop server before upgrade
+#
+
+SERVICE=pytinyirrdcache
+
+echo "[i] Stopping $SERVICE"
+
+/sbin/stop $SERVICE
+
+# Wait a bit (to make sure the server is down)
+sleep 2
+

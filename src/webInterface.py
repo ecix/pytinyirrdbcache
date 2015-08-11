@@ -1,3 +1,9 @@
+from os import environ                                                          
+port = environ['PY_TINY_IRRD_CACHE_PORT']
+if not port:                                                              
+    print("port not specified in ENV: PY_TINY_IRRD_CACHE_PORT")        
+    raise
+
 from flask import Flask
 from flask import Response
 
@@ -182,6 +188,10 @@ def unlock():
 def getStatsRequest():
     global writeLock
     if not writeLock.empty():
+        stats = { "memoryUsage":memusage, "whoisDatabases":whoisDatabaseContainer.getDatabaseCount() }
+
+        data = json.dumps(stats)
+
         resp = Response("sorry, somebody is writing to the database", status=408)
         return resp
 
@@ -201,7 +211,7 @@ def getStatsRequest():
 if __name__ == "__main__":
     def caller():
         #app.run( port=8087 )
-        app.run( debug=True, port=8087, threaded=True )
+        app.run( debug=True, port=port, threaded=True )
 
     from multiprocessing import Process
     from multiprocessing import Queue

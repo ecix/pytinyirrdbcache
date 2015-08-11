@@ -1,15 +1,15 @@
+from os import environ
+configPath = environ['PY_TINY_IRRD_CACHE_CONFIG']
+if not configPath:
+    print("Config file not specified in ENV: PY_TINY_IRRD_CACHE_CONFIG")
+    raise
+storagePath = environ['PY_TINY_IRRD_CACHE_STORAGE']
+if not storagePath:
+    print("storage path not specified in ENV: PY_TINY_IRRD_CACHE_STORAGE")
+    raise
+
 import re
 import parser
-
-import sys
-import argparse
-argparser = argparse.ArgumentParser()
-argparser.add_argument('--config')
-result = argparser.parse_args(sys.argv[1:])
-if not getattr(result,"config"):
-    raise Exception("no config given")
-else:
-    configPath = result.config
 
 ###############################################################################
 # is a container for the individual whois databases
@@ -294,7 +294,7 @@ class WhoisDB(object):
         if not parsedUrl.scheme == "ftp":
             return
 
-        fileName = "data/"+self.__name+".db.gz"
+        fileName = storagePath+"/data/"+self.__name+".db.gz"
 
         import ftplib
         fileHandle = open(fileName, 'wb')
@@ -327,7 +327,7 @@ class WhoisDB(object):
 
         # write the backup container to disc
         import json
-        handle = open("db/"+self.__name+"_backup.json", "w")
+        handle = open(storagePath+"/db/"+self.__name+"_backup.json", "w")
         json.dump(backup, handle)
         handle.close()
 
@@ -339,7 +339,7 @@ class WhoisDB(object):
 
         # load the backup container from disc
         import json
-        handle = open("db/"+self.__name+"_backup.json", "r")
+        handle = open(storagePath+"/db/"+self.__name+"_backup.json", "r")
         backup = json.load(handle)
         handle.close()
 

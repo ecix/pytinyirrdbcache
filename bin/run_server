@@ -1,0 +1,40 @@
+#!/bin/bash
+L=0;
+C=0;
+for N in `grep -Ecri 'todo|fixme' src/ | grep -E '.py:[1-9]' | cut -d':' -f 2`;
+ do let C=C+N; let L=L+1;
+done
+
+if test $C -ne 0; then
+echo "###############################################"
+echo "WARNING: $C remaining TODOs/FIXMEs in $L files:"
+for T in `grep -Ecri 'todo|fixme' src/ | grep -E '.py:[1-9]'`; do echo $T | cut -d':' -f 1; done;
+echo "###############################################"
+echo "sleeping for $C seconds"
+#sleep $C
+else
+echo "No TODOs in comments remaining!"
+fi
+
+BASEDIR=$(dirname $0)
+
+echo "[i] Loading virtualenv (venv)"
+source $BASEDIR/../venv/bin/activate
+
+echo "[i] Starting development server"
+
+PY_TINY_IRRD_CACHE_CONFIG=$BASEDIR/../etc/whoisDatabases.json
+PY_TINY_IRRD_CACHE_STORAGE=$BASEDIR/../
+
+# Resolve absolute path:
+PY_TINY_IRRD_CACHE_CONFIG=`python -c "import os; print(os.path.abspath('$PY_TINY_IRRD_CACHE_CONFIG'));"`
+PY_TINY_IRRD_CACHE_STORAGE=`python -c "import os; print(os.path.abspath('$PY_TINY_IRRD_CACHE_STORAGE'));"`
+PY_TINY_IRRD_CACHE_PORT=8087
+
+export PY_TINY_IRRD_CACHE_CONFIG
+export PY_TINY_IRRD_CACHE_STORAGE
+export PY_TINY_IRRD_CACHE_PORT
+
+echo "[i] Using config file: $PY_TINY_IRRD_CACHE_CONFIG"
+cd $BASEDIR/../src/ && python webInterface.py
+

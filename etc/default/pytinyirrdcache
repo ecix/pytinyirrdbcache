@@ -1,0 +1,24 @@
+
+#
+# CSC Api Server Startup configuration
+#
+
+# TODO: not actually used yet
+PY_TINY_IRRD_CACHE_CONFIG=/etc/whoisDatabases.json
+PY_TINY_IRRD_CACHE_STORAGE=/opt/pytinyirrdcache/
+
+# put proper port here
+PY_TINY_IRRD_CACHE_PORT=8085
+
+USER=csc_api
+GROUP=csc_api
+
+NUM_WORKERS=1
+NUM_THREADS=1
+
+TIMEOUT=120
+
+LOG_LEVEL=info
+
+PID_FILE=/var/run/csc-api-server.pid
+
