@@ -6,10 +6,13 @@ Update = namedtuple('Update', 'action,serial,record')
 
 # Record types
 Macro = namedtuple('Macro', 'name,members')
-Route = namedtuple('Route', 'route,origin')
-Route6 = namedtuple('Route6', 'route6,origin')
+Route = namedtuple('Route', 'prefix,origin')
+Route6 = namedtuple('Route6', 'prefix,origin')
 Unrecognised = namedtuple('Unrecognised', 'key')
 
 # Action types
-ADD = namedtuple('Add', '')()
-DEL = namedtuple('Del', '')()
+ADD = namedtuple('ADD', '')()
+DEL = namedtuple('DEL', '')()
+
+# Cache data
+WhoisCacheData = namedtuple('WhoisCacheData', 'serial,macros,prefix4,prefix6')

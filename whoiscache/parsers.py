@@ -1,3 +1,6 @@
+import logging
+import pprint
+import sys
 from whoiscache import types as T
 
 """
@@ -34,6 +37,8 @@ def read_act_serial(handle):
         if line == '':
             break
         elif line[0] in {'%', '#', '\n'}:
+            if line[0] == '%':
+                logging.info('recv: ' + line.strip())
             continue
         if line.startswith('ADD '):
             return (T.ADD, line[4:].strip())
@@ -57,7 +62,12 @@ def read_record(handle):
         if not line.startswith('#'):
             block.append(line[:-1])
     if block:
-        return parse_record(block)
+        try:
+            return parse_record(block)
+        except Exception:
+            logging.error("Error parsing block:")
+            pprint.pprint(block, stream=sys.stderr)
+            raise
 
 
 def parse_record(block):
@@ -122,7 +132,4 @@ def block_lookup_many(block, key):
             lastkey = key
         if thiskey == key:
             lines.append(val)
-    if lines:
-        return lines
-    else:
-        raise KeyError(key)
+    return lines
