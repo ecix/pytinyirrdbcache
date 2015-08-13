@@ -1,0 +1,68 @@
+# ignored
+aut-num:       AS372
+as-name:       UNSPECIFIED
+descr:         Nasa Science Network (FIX-West)
+admin-c:       Not available
+tech-c:        See MAINT-AS372
+mnt-by:        MAINT-AS372
+changed:       DB-admin@merit.edu 19950201
+source:        RADB
+
+# a Route
+route:         167.96.0.0/16
+descr:         Cyprus Minerals Company
+               9100 East Mineral Circle
+               M.S. 257N
+               Englewood
+               CO 80112, USA
+origin:        AS2900
+member-of:     RS-COMM_NSFNET
+mnt-by:        MAINT-AS2900
+changed:       nsfnet-admin@merit.edu 19950506
+source:        RADB
+
+# ignored
+mntner:        MAINT-AS6293
+descr:         Maintainer for AS 6293
+admin-c:       Robert John Dinse
+upd-to:        nanook@eskimo.com
+mnt-nfy:       nanook@eskimo.com
+auth:          MAIL-FROM nanook@eskimo.com
+auth:          MAIL-FROM support@eskimo.com
+mnt-by:        MAINT-AS6293
+changed:       nanook@eskimo.com 19960612
+source:        RADB
+
+# a Macro
+as-set:        AS-LEN
+descr:         Lane Education Network Clients
+members:       AS4222, AS4016, AS4529, AS6377
+tech-c:        DMM65
+admin-c:       DMM65
+notify:        nethelp@ns.uoregon.edu
+mnt-by:        MAINT-AS3582
+changed:       meyer@ns.uoregon.edu 19960613
+source:        RADB
+
+# another Macro
+as-set:        AS-OREGON-IX-PEERAGE
+descr:         Peerage from the OREGON Exchange
+members:       AS4201, AS1798, AS3582, AS4222, AS2914,
+               AS6447, AS5650, AS6108, AS3838, AS1982,
+               AS4534, AS5798, AS8028
+tech-c:        DMM65
+admin-c:       DMM65
+notify:        meyer@ns.uoregon.edu
+mnt-by:        MAINT-AS3582
+changed:       meyer@ns.uoregon.edu 19961122
+source:        RADB
+
+# a Route6
+route6:     2001:1988::/32
+descr:      NextWeb: IPv6
+origin:     AS16467
+notify:     routing@nextweb.net
+mnt-by:     MAINT-AS16467
+changed:    charlie@nextweb.net 20041019  #17:24:25(UTC)
+source:     RADB
+
