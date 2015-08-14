@@ -1,4 +1,3 @@
-import gevent
 import logging
 import os
 import os.path
@@ -9,7 +8,7 @@ import time
 from whoiscache import parsers, settings, state, types as T
 
 
-class WhoisCacheManager(gevent.Greenlet):
+class WhoisCache(object):
     """
     Top level manager of a whois cache of an upstream.
     Should manage all aspects of cache including persistance,
@@ -23,32 +22,28 @@ class WhoisCacheManager(gevent.Greenlet):
         self.cache_path = os.path.join(settings.CACHE_DATA_DIRECTORY,
                                        "%s.cache" % self.config['name'])
 
-    def start(self):
-        """ Thread target """
-        self.load()
-
-        while True:
-            self.update()
-            time.sleep(settings.WHOIS_UPDATE_INTERVAL)
+    @property
+    def name(self):
+        return self.config['name']
 
     def load(self):
         """
-        Load the cache. Until this method returns, the cache is not ready
-        to use.
+        Initialise the cache by loading from disk or downloading
+        remote dump.
         """
         if os.path.exists(self.cache_path):
             self.logger.info("Restoring state from %s", self.cache_path)
             self.state.load(open(self.cache_path))
-            self.logger.info("State loaded @%s", self.state.serial)
+            self.logger.info("Loaded state@%s", self.state.serial)
         else:
             paths = self.download_dump()
             self.load_dump(*paths)
             self.save()
-        self.update()
         self.ready = True
 
     def save(self):
-        self.logger.info("Saving state to %s", self.cache_path)
+        self.logger.info("Saving state@%s to %s", self.state.serial,
+                         self.cache_path)
         self.state.save(open(self.cache_path, 'w'))
 
     def load_dump(self, serial_path, dump_path):
