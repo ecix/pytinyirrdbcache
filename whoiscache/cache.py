@@ -1,3 +1,5 @@
+import cPickle as pickle
+import gevent
 import logging
 import os
 import os.path
@@ -16,7 +18,6 @@ class WhoisCache(object):
     """
     def __init__(self, config):
         self.config = config
-        self.ready = False
         self.state = state.WhoisCacheState()
         self.logger = logging.root
         self.cache_path = os.path.join(settings.CACHE_DATA_DIRECTORY,
@@ -33,31 +34,28 @@ class WhoisCache(object):
         """
         if os.path.exists(self.cache_path):
             self.logger.info("Restoring state from %s", self.cache_path)
-            self.state.load(open(self.cache_path))
+            self.state = pickle.load(open(self.cache_path))
             self.logger.info("Loaded state@%s", self.state.serial)
         else:
             paths = self.download_dump()
             self.load_dump(*paths)
             self.save()
-        self.ready = True
 
     def save(self):
         self.logger.info("Saving state@%s to %s", self.state.serial,
                          self.cache_path)
-        self.state.save(open(self.cache_path, 'w'))
+        pickle.dump(self.state, open(self.cache_path, 'w'))
 
     def load_dump(self, serial_path, dump_path):
         """ Build the cache from a dump """
         self.logger.info("Loading dump at %s" % dump_path)
-        start_t = time.time()
         serial = open(serial_path).read().strip()
         # Use zcat in separate process for speedup
         zcat = subprocess.Popen(['zcat', dump_path], -1, stdout=subprocess.PIPE)
-        for record in parsers.parse_dump(zcat.stdout):
+        for record in long_thing("Loading dump",
+                                 parsers.parse_dump(zcat.stdout)):
             update = T.Update(T.ADD, serial, record)
             self.state.apply_update(update)
-        self.logger.info("Loaded %s in %.2f seconds", dump_path,
-                         time.time() - start_t)
 
     def download_dump(self):
         """ Download latest data dump and serial from upstream """
@@ -88,7 +86,8 @@ class WhoisCache(object):
         sock.send(req)
         fh = sock.makefile()
         saw_updates = 0
-        for update in parsers.parse_updates(fh):
+        for update in long_thing("Process updates",
+                                 parsers.parse_updates(fh)):
             saw_updates = 1
             self.state.apply_update(update)
         if saw_updates:
@@ -105,3 +104,15 @@ def download_file(dest, uri):
     if rc != 0:
         raise IOError("Command exited with %s: %s" % (rc, cmd))
     os.rename(tmp, dest)
+
+
+def long_thing(name, iter, notify=100000):
+    logging.info("Starting %s", name)
+    start_t = time.time()
+    for i, item in enumerate(iter):
+        yield item
+        if i % 100 == 0:
+            gevent.sleep(0)  # yield to other threads
+        if i and i % notify == 0:
+            logging.info(str(i))
+    logging.info("Finished %s in %.2f seconds", name, time.time() - start_t)
