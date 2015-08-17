@@ -25,7 +25,7 @@ as-set:         AS-TMPEBONECWIX
 descr:          CWIX ASes announced to EBONE
 members:        AS3727, AS4445, AS4610, AS4624, AS4637, AS4654, AS4655, AS4656, AS4659
 members:        AS4681, AS4696, AS4714, AS4849, AS5089, AS5090, AS5532, AS5551, AS5559
-members:        AS5655, AS6081, AS6255, AS6292, AS6618, AS6639
+members:        AS5655, AS6081, AS6255, AS6292, AS6618, AS6639 # silly comments here
 tech-c:         DUMY-RIPE
 admin-c:        DUMY-RIPE
 notify:         staff@ebone.net
@@ -44,7 +44,7 @@ remarks:        ****************************
 
 route:          193.254.30.0/24
 descr:          Lufthansa Airplus Servicekarten GmbH
-origin:         AS12726
+origin:         AS12726   # haha gotcha
 mnt-by:         AS12312-MNT
 changed:        unread@ripe.net 20000101
 created:        2002-05-21T15:33:55Z

@@ -1,5 +1,6 @@
 import logging
 import pprint
+import re
 import sys
 from whoiscache import types as T
 
@@ -110,26 +111,29 @@ def parse_route6(block):
                     block_lookup(block, 'origin'))
 
 
+re_strip_comment = re.compile('\s*#.*')
+
+
 def block_lookup(block, key):
     """ Lookup a value from a block by iterating the lines """
     for line in block:
         if line.startswith(key + ':'):
-            return line[len(key)+1:].strip()
+            val = line[len(key)+1:].strip()
+            return re_strip_comment.sub('', val)
     raise KeyError(key)
 
 
 def block_lookup_many(block, key):
     """ Lookup a multiline value from a block by iterating """
     lines = []
-    lastkey = None
+    curkey = None
     for line in block:
-        thiskey = lastkey
         val = line.strip()
         if val.startswith('#'):
             continue
         if ':' in val:
-            (thiskey, val) = val.split(':', 1)
-            lastkey = key
-        if thiskey == key:
+            (curkey, val) = val.split(':', 1)
+        if curkey == key:
+            val = re_strip_comment.sub('', val)
             lines.append(val)
     return lines
