@@ -21,3 +21,6 @@ CACHE_DATA_DIRECTORY = 'data'
 
 # Seconds between WHOIS update query
 WHOIS_UPDATE_INTERVAL = 60
+
+
+HTTP_ENDPOINT = ('0.0.0.0', 8087)
