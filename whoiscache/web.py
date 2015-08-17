@@ -41,6 +41,15 @@ listing("prefixes/4", "prefix4")
 listing("prefixes/6", "prefix6")
 
 
+@app.route('/cache/<string:cache>/dump')
+@app.uses_cache
+def dump(cache):
+    macros = {k: list(v) for k, v in cache.macros.items()}
+    return json200({
+        'macros': macros
+    })
+
+
 def json200(data):
     data = {"status": "200 OK", "data": data}
     return flask.Response(json.dumps(data), status=200,

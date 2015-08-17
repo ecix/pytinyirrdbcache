@@ -59,7 +59,7 @@ class combinedsetdict(object):
     Dict-like object to combine dicts of sets
     """
     def __init__(self, sources, reducer=operator.ior):
-        self.sources = sources
+        self.sources = list(sources)
         self.reducer = reducer
 
     def __getitem__(self, key):
@@ -78,3 +78,6 @@ class combinedsetdict(object):
     def keys(self):
         keysets = [set(s.keys()) for s in self.sources]
         return list(reduce(operator.ior, keysets))
+
+    def items(self):
+        return [(k, self[k]) for k in self.keys()]
