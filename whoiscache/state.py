@@ -58,14 +58,14 @@ class CacheStateCombiner(object):
     """
     def __init__(self, states_by_name):
         states = sorted(states_by_name.items(), key=lambda (k, v): k)
-        self.macros = combinedsetdict(st.macros for _, st in states)
-        self.prefix4 = combinedsetdict(st.prefix4 for _, st in states)
-        self.prefix6 = combinedsetdict(st.prefix6 for _, st in states)
+        self.macros = CombinerDict(st.macros for _, st in states)
+        self.prefix4 = CombinerDict(st.prefix4 for _, st in states)
+        self.prefix6 = CombinerDict(st.prefix6 for _, st in states)
         self.serial = ','.join("%s:%s" % (name, st.serial)
                                for (name, st) in states)
 
 
-class combinedsetdict(object):
+class CombinerDict(object):
     """
     Dict-like object to combine dicts of sets
     """
@@ -74,11 +74,15 @@ class combinedsetdict(object):
         self.reducer = reducer
 
     def __getitem__(self, key):
-        default = set()
-        results = [s.get(key, default) for s in self.sources]
-        if all(r is default for r in results):
+        values = []
+        for source in self.sources:
+            try:
+                values.append(source[key])
+            except KeyError:
+                pass
+        if len(values) == 0:
             raise KeyError(key)
-        return reduce(self.reducer, results)
+        return reduce(self.reducer, values)
 
     def get(self, key, default=None):
         try:
