@@ -45,3 +45,21 @@ class TestWhoisState(unittest.TestCase):
         }, state.prefix6)
         state.apply_update((T.DEL, '5', T.Route6(prefix='bcd', origin='asn2')))
         self.assertEqual({'asn1': set(['def'])}, state.prefix6)
+
+
+class TestCacheStateCombiner(unittest.TestCase):
+    def test_combiner(self):
+        z = WhoisCacheState()
+        y = WhoisCacheState()
+        x = WhoisCacheState()
+        states = {'z': z, 'y': y, 'x': x}
+        for name in states:
+            states[name].serial = ord(name)
+        combined = CacheStateCombiner(states)
+        # Test combinedsetdict creation
+        for prop in ['macros', 'prefix4', 'prefix6']:
+            self.assertEqual([id(getattr(l, prop)) for l in [x,y,z]],
+                             map(id, getattr(combined, prop).sources))
+        # test serial generation
+        self.assertEqual('x:120,y:121,z:122', combined.serial)
+
