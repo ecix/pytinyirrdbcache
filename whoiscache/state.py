@@ -30,13 +30,23 @@ class WhoisCacheState(object):
         if action == T.ADD:
             self.prefix4.setdefault(route.origin, set()).add(route.prefix)
         elif action == T.DEL and route.origin in self.prefix4:
-            self.prefix4[route.origin].discard(route.prefix)
+            prefixes = self.prefix4[route.origin]
+            prefixes.discard(route.prefix)
+            if prefixes:
+                self.prefix4[route.origin] = prefixes
+            else:
+                del self.prefix4[route.origin]
 
     def _update_route6(self, action, route):
         if action == T.ADD:
             self.prefix6.setdefault(route.origin, set()).add(route.prefix)
         elif action == T.DEL and route.origin in self.prefix6:
-            self.prefix6[route.origin].discard(route.prefix)
+            prefixes = self.prefix6[route.origin]
+            prefixes.discard(route.prefix)
+            if prefixes:
+                self.prefix6[route.origin] = prefixes
+            else:
+                del self.prefix6[route.origin]
 
     def _update_unrecognised(self, _):
         pass
