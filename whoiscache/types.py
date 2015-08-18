@@ -11,8 +11,8 @@ Route6 = namedtuple('Route6', 'prefix,origin')
 Unrecognised = namedtuple('Unrecognised', 'key')
 
 # Action types
-ADD = namedtuple('ADD', '')()
-DEL = namedtuple('DEL', '')()
+ADD = namedtuple('ADD', '')
+DEL = namedtuple('DEL', '')
 
 # Cache data
 WhoisCacheData = namedtuple('WhoisCacheData', 'serial,macros,prefix4,prefix6')
