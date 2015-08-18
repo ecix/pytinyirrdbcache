@@ -48,7 +48,7 @@ class WhoisCacheState(object):
             else:
                 del self.prefix6[route.origin]
 
-    def _update_unrecognised(self, _):
+    def _update_unrecognised(self, *_):
         pass
 
 
