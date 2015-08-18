@@ -57,11 +57,12 @@ class CacheStateCombiner(object):
     Provides a combined interface to underlying caches.
     """
     def __init__(self, states_by_name):
-        states = [states_by_name[k] for k in sorted(states_by_name)]
-        self.macros = combinedsetdict(st.macros for st in states)
-        self.prefix4 = combinedsetdict(st.prefix4 for st in states)
-        self.prefix6 = combinedsetdict(st.prefix6 for st in states)
-        self.serial = repr(tuple(st.serial for st in states))
+        states = sorted(states_by_name.items(), key=lambda (k, v): k)
+        self.macros = combinedsetdict(st.macros for _, st in states)
+        self.prefix4 = combinedsetdict(st.prefix4 for _, st in states)
+        self.prefix6 = combinedsetdict(st.prefix6 for _, st in states)
+        self.serial = ','.join("%s:%s" % (name, st.serial)
+                               for (name, st) in states)
 
 
 class combinedsetdict(object):
