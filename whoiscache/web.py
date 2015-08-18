@@ -63,18 +63,27 @@ listing("prefixes/4", "prefix4", "List ASNs with ipv4 prefixes")
 listing("prefixes/6", "prefix6", "List ASNs with ipv6 prefixes")
 
 
+@app.route('/cache/<string:cache>/status')
+@app.uses_cache
+def cache_status(cache):
+    return json200({'serial': cache.serial})
+cache_status.__doc__ = "Return status of cache"
+
+
 @app.route('/cache/<string:cache>/dump')
 @app.uses_cache
 def dump(cache):
     return json200({
+        'serial': cache.serial,
         'macros': {k: list(v) for k, v in cache.macros.items()},
         'prefix4': {k: list(v) for k, v in cache.prefix4.items()},
         'prefix6': {k: list(v) for k, v in cache.prefix6.items()},
     })
 dump.__doc__ = """Dump all data for named cache in format:
-{ "macros": {name: members},
-  "prefix4" {asn: prefixes},
-  "prefix6: {asn: prefixes}}"""
+{ "serial":  $serial,
+  "macros":  {$name: $members},
+  "prefix4": {$asn: $prefixes},
+  "prefix6": {$asn: $prefixes}}"""
 
 
 def json200(data):
