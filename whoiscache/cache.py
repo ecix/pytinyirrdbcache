@@ -54,7 +54,7 @@ class WhoisCache(object):
         zcat = subprocess.Popen(['zcat', dump_path], -1, stdout=subprocess.PIPE)
         for record in long_thing("Loading dump",
                                  parsers.parse_dump(zcat.stdout)):
-            update = T.Update(T.ADD, serial, record)
+            update = (T.ADD, serial, record)
             self.state.apply_update(update)
 
     def download_dump(self):
@@ -97,6 +97,7 @@ class WhoisCache(object):
 
 
 def download_file(dest, uri):
+    """ Download a file using CURL """
     tmp = dest + '.part'
     cmd = 'curl -s -o "%s" "%s"' % (tmp, uri)
     logging.info('+ ' + cmd)
@@ -107,6 +108,7 @@ def download_file(dest, uri):
 
 
 def long_thing(name, iter, notify=100000):
+    """ Wrapper to log progress of a long operation """
     logging.info("Starting %s", name)
     start_t = time.time()
     for i, item in enumerate(iter):

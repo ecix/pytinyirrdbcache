@@ -29,7 +29,7 @@ def parse_updates(handle):
         if not act_serial:
             break
         record = read_record(handle)
-        yield T.Update(*(act_serial + (record,)))
+        yield act_serial + (record,)
 
 
 def read_act_serial(handle):

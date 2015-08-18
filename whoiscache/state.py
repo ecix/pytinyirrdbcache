@@ -14,25 +14,25 @@ class WhoisCacheState(object):
         self.prefix4 = {}
         self.prefix6 = {}
 
-    def apply_update(self, update):
-        typename = type(update.record).__name__.lower()
+    def apply_update(self, (action, serial, record)):
+        typename = type(record).__name__.lower()
         method = getattr(self, "_update_" + typename)
-        method(update)
-        self.serial = update.serial
+        method(action, record)
+        self.serial = serial
 
-    def _update_macro(self, (action, _, macro)):
+    def _update_macro(self, action, macro):
         if action == T.ADD:
             self.macros[macro.name] = set(macro.members)
         elif action == T.DEL and macro.name in self.macros:
             del self.macros[macro.name]
 
-    def _update_route(self, (action, _, route)):
+    def _update_route(self, action, route):
         if action == T.ADD:
             self.prefix4.setdefault(route.origin, set()).add(route.prefix)
         elif action == T.DEL and route.origin in self.prefix4:
             self.prefix4[route.origin].discard(route.prefix)
 
-    def _update_route6(self, (action, _, route)):
+    def _update_route6(self, action, route):
         if action == T.ADD:
             self.prefix6.setdefault(route.origin, set()).add(route.prefix)
         elif action == T.DEL and route.origin in self.prefix6:
