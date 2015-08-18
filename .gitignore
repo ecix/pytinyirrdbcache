@@ -33,3 +33,6 @@ pep8.txt
 
 # IDE stuff
 .ropeproject
+.env/
+data
+settings_local_whoiscache.py
