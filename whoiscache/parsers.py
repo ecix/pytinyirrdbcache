@@ -86,18 +86,18 @@ def parse_record(block):
 
 def parse_macro(block):
     """ Parse a macro """
-    name = block_lookup(block, 'as-set')
+    name = block_lookup(block, 'as-set').upper()
     members = []
     for line in block_lookup_many(block, 'members'):
         items = filter(None, line.split(','))
-        members.extend(i.strip() for i in items)
+        members.extend(i.strip().upper() for i in items)
     return T.Macro(name, members)
 
 
 def parse_route(block):
     """ Parse a route """
     return T.Route(block_lookup(block, 'route'),
-                   block_lookup(block, 'origin'))
+                   block_lookup(block, 'origin').upper())
 
 
 def parse_route6(block):
@@ -108,7 +108,7 @@ def parse_route6(block):
     T.Route6(route6='abc', origin='wat')
     """
     return T.Route6(block_lookup(block, 'route6'),
-                    block_lookup(block, 'origin'))
+                    block_lookup(block, 'origin').upper())
 
 
 re_strip_comment = re.compile('\s*#.*')

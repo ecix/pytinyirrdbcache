@@ -21,9 +21,9 @@ remarks:        * To view the original object, please query the RIPE Database at
 remarks:        * http://www.ripe.net/whois
 remarks:        ****************************
 
-as-set:         AS-TMPEBONECWIX
+as-set:         as-tmpebonecwix
 descr:          CWIX ASes announced to EBONE
-members:        AS3727, AS4445, AS4610, AS4624, AS4637, AS4654, AS4655, AS4656, AS4659
+members:        as3727, as4445, AS4610, AS4624, AS4637, AS4654, AS4655, AS4656, AS4659
 members:        AS4681, AS4696, AS4714, AS4849, AS5089, AS5090, AS5532, AS5551, AS5559
 members:        AS5655, AS6081, AS6255, AS6292, AS6618, AS6639 # silly comments here
 tech-c:         DUMY-RIPE
@@ -44,7 +44,7 @@ remarks:        ****************************
 
 route:          193.254.30.0/24
 descr:          Lufthansa Airplus Servicekarten GmbH
-origin:         AS12726   # haha gotcha
+origin:         as12726   # haha gotcha
 mnt-by:         AS12312-MNT
 changed:        unread@ripe.net 20000101
 created:        2002-05-21T15:33:55Z
@@ -60,7 +60,7 @@ remarks:        ****************************
 
 route6:         2001:1578:200::/40
 descr:          GEFOEKOM-DE-ALLOC
-origin:         AS12817
+origin:         as12817
 org:            ORG-GEF1-RIPE
 mnt-by:         GEFOEKOM-MNT
 changed:        unread@ripe.net 20000101
