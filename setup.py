@@ -3,16 +3,16 @@
 import os.path
 from setuptools import setup, find_packages
 
-
-requirements_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),\
-                                 'requirements.txt')
+curdir = os.path.dirname(os.path.realpath(__file__))
+requirements = open(curdir + '/requirements.txt').readlines()
+version = open(curdir + '/VERSION').read().strip()
 
 setup(
     name='whoiscache',
     description='Cache service for WHOIS data',
-    version=__import__('whoiscache').__version__,
+    version=version,
     author='sadler@port-zero.com',
     packages=find_packages(),
-    install_requires=open(requirements_path).readlines(),
+    install_requires=requirements,
     include_package_data=True,
 )
