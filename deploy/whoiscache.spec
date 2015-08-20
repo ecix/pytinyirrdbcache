@@ -1,5 +1,7 @@
-# Version must be defined here
+# Version must be defined here (see bin/gen_srpm.sh)
 
+# This is to stop yum from generating .py files with
+# the system-wide installed python
 %global __os_install_post %{nil}
 %define name whoiscache
 %define unmangled_version %{version}
