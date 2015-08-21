@@ -1,2 +1,4 @@
 include requirements.txt
 include serve.py
+recursive-include bin *
+recursive-include deploy *

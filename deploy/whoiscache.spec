@@ -1,11 +1,13 @@
-# Version must be defined here (see bin/gen_srpm.sh)
+# Needs these variables prepended
+# define version ...
+# define with_prod_python ...
 
-# This is to stop yum from generating .py files with
-# the system-wide installed python
-%global __os_install_post %{nil}
 %define name whoiscache
 %define unmangled_version %{version}
 %define release 1
+# This is to stop yum from generating .py files with
+# the system-wide installed python
+%global __os_install_post %{nil}
 
 Summary: Cache service for WHOIS data
 Name: %{name}
@@ -26,14 +28,18 @@ UNKNOWN
 %setup -n %{name}-%{unmangled_version}
 
 %build
-python -m compileall .
+%{with_prod_python} python -m compileall .
 
 %install
 od=`pwd`
 mkdir $RPM_BUILD_ROOT/opt
-cp -r . $RPM_BUILD_ROOT/opt/%name
+cp -r . $RPM_BUILD_ROOT/opt/%{name}
+cp -r deploy/etc $RPM_BUILD_ROOT/etc
 cd $RPM_BUILD_ROOT
 find . | cut -c2- > $od/INSTALLED_FILES
+
+%post
+%{with_prod_python} /opt/%{name}/bin/venv_init
 
 %clean
 rm -rf $RPM_BUILD_ROOT

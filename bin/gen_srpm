@@ -10,11 +10,13 @@ VERSION=$2
 BUILD_SERVER=$3
 SPECFILEBODY=$4
 APP="$APP_NAME-$VERSION"
+WITH_PROD_PYTHON="scl enable python27 --"
 SPECFILE=${APP_NAME}.spec
 
 # Write spec file
 mkdir -p dist
 echo "%define version $VERSION" > dist/$SPECFILE
+echo "%define with_prod_python $WITH_PROD_PYTHON" >> dist/$SPECFILE
 cat $SPECFILEBODY >> dist/$SPECFILE
 
 # Create source distribution
