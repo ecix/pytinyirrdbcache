@@ -30,7 +30,7 @@ if [ ! -z "$LD_LIBRARY_PATH" ]; then
     mv python2 realpython2
     tee python2 << EOF
 #!/bin/bash
-LD_LIBRARY_PATH="$LD_LIBRARY_PATH" \`dirname \$0\`/realpython2 \$@
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH" exec \`dirname \$0\`/realpython2 \$@
 EOF
     chmod +x python2
     cd -

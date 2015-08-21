@@ -34,4 +34,4 @@ pep8.txt
 .ropeproject
 .env/
 data
-settings_local_whoiscache.py
+/settings_local_whoiscache.py

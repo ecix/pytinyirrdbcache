@@ -2,4 +2,4 @@
 
 cd `dirname $0`/..
 
-venv/bin/python serve.py $@
+exec venv/bin/python serve.py $@
