@@ -2,10 +2,17 @@
 
 Web service to provide a JSON interface to upstream WHOIS providers
 
+## Development
+
+    make develop
+
 ## Testing
 
-    nosetests -v tests
+    make test
 
+## Deployment
+
+    make srpm
 
 ## See Also
 

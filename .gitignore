@@ -30,8 +30,8 @@ pep8.txt
 # Translations
 *.mo
 
-# IDE stuff
 .ropeproject
-.env/
-data
+/.env
+/venv
+/data
 /settings_local_whoiscache.py

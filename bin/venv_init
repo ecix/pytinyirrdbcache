@@ -24,7 +24,7 @@ echo "[i] Using $VIRTUALENV"
 $VIRTUALENV venv
 
 # Add in a hack here to set $LD_LIBRARY_PATH automatically
-# when running python
+# when running python (neccesary for scl installed python)
 if [ ! -z "$LD_LIBRARY_PATH" ]; then
     cd venv/bin
     mv python2 realpython2
