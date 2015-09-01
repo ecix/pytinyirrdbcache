@@ -11,29 +11,31 @@ echo "[i] Setting up virtualenv (venv)"
 BASEDIR=$(dirname $0)
 cd $BASEDIR/../
 
+if [ ! -d venv ]; then
 
-# test which virtualenv tool to use
-if which virtualenv2 >/dev/null; then
-  VIRTUALENV=virtualenv2
-else
-  VIRTUALENV=virtualenv
-fi
+    # test which virtualenv tool to use
+    if which virtualenv2 >/dev/null; then
+    VIRTUALENV=virtualenv2
+    else
+    VIRTUALENV=virtualenv
+    fi
 
-echo "[i] Using $VIRTUALENV"
+    echo "[i] Using $VIRTUALENV"
 
-$VIRTUALENV venv
+    $VIRTUALENV venv
 
-# Add in a hack here to set $LD_LIBRARY_PATH automatically
-# when running python (neccesary for scl installed python)
-if [ ! -z "$LD_LIBRARY_PATH" ]; then
-    cd venv/bin
-    mv python2 realpython2
-    tee python2 << EOF
+    # Add in a hack here to set $LD_LIBRARY_PATH automatically
+    # when running python (neccesary for scl installed python)
+    if [ ! -z "$LD_LIBRARY_PATH" ]; then
+        cd venv/bin
+        mv python2 realpython2
+        tee python2 << EOF
 #!/bin/bash
 LD_LIBRARY_PATH="$LD_LIBRARY_PATH" exec \`dirname \$0\`/realpython2 \$@
 EOF
-    chmod +x python2
-    cd -
+        chmod +x python2
+        cd -
+    fi
 fi
 
 echo "[i] Loading virtualenv (venv)"
