@@ -8,6 +8,7 @@ Web service to provide a JSON interface to upstream WHOIS providers
 
 ## Testing
 
+    sudo apt-get install libxml2-dev libxslt1-dev
     make test
 
 ## Deployment

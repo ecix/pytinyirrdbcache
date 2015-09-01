@@ -14,5 +14,5 @@ pip install -r requirements-test.txt
 
 pep8 --ignore=E126,E127,E128 -r $SOURCE_DIR > pep8.txt || true
 
-nosetests -v --with-xunit --with-xcoverage --cover-erase --cover-inclusive --cover-html --cover-package=$SOURCE_DIR tests
+nosetests -v --with-xunit --cover-erase --cover-inclusive --cover-html --cover-package=$SOURCE_DIR tests
 
