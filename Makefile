@@ -8,7 +8,7 @@ all:
 	echo "Nothing to do"
 
 test:
-	.env/bin/nosetests -s -v tests
+	venv/bin/nosetests -s -v tests
 
 develop:
 	bin/venv_init
