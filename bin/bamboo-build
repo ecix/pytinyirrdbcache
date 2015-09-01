@@ -4,15 +4,11 @@ SOURCE_DIR=whoiscache
 
 set -e
 
-sloccount --duplicates --wide --details $SOURCE_DIR > sloccount.sc
-
 bin/venv_init
 
 . venv/bin/activate
 
 pip install -r requirements-test.txt
-
-pep8 --ignore=E126,E127,E128 -r $SOURCE_DIR > pep8.txt || true
 
 nosetests -v --with-xunit --cover-erase --cover-inclusive --cover-html --cover-package=$SOURCE_DIR tests
 
