@@ -22,9 +22,10 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
 Vendor: sadler@port-zero.com <UNKNOWN>
+Requires: python27
 
 %description
-UNKNOWN
+Cache service for WHOIS data
 
 %prep
 %setup -n %{name}-%{unmangled_version}
@@ -47,7 +48,7 @@ useradd --system -d %{homedir} %{app_user}
 chown -R %{app_user}:%{app_user} %{homedir}
 
 %postun
-if [ "$1" = "1" ]; then
+if [ "$1" = "0" ]; then
    userdel --force %{app_user} 2> /dev/null; true
 fi
 
