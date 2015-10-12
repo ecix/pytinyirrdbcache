@@ -1,11 +1,10 @@
-
 """
 Settings resolver. Do not add settings here!
 
 DEVELOPERS:
 
 If you need to override some settings, create a file called
-settings_local_orca_backend.py in this folder and do the overrides there.
+settings_local_whoiscache.py in this folder and do the overrides there.
 This file is added to the .gitignore so your local settings will not be
 committed.
 
