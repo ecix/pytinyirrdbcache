@@ -49,11 +49,16 @@ class WhoisCache(object):
     def load_dump(self, serial_path, dump_path):
         """ Build the cache from a dump """
         self.logger.info("Loading dump at %s" % dump_path)
+        import pdb; pdb.set_trace()
         serial = open(serial_path).read().strip()
         # Use zcat in separate process for speedup
-        zcat = subprocess.Popen(['zcat', dump_path], -1, stdout=subprocess.PIPE)
-        for record in long_thing("Loading dump",
-                                 parsers.parse_dump(zcat.stdout)):
+        if dump_path.endswith('gz'):
+            zcat = subprocess.Popen(['zcat', dump_path], -1,
+                                    stdout=subprocess.PIPE)
+            fh = zcat.stdout
+        else:
+            fh = open(dump_path)
+        for record in long_thing("Loading dump", parsers.parse_dump(fh)):
             update = ("ADD", serial, record)
             self.state.apply_update(update)
 
