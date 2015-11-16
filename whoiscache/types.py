@@ -6,7 +6,3 @@ Macro = namedtuple('Macro', 'name,members')
 Route = namedtuple('Route', 'prefix,origin')
 Route6 = namedtuple('Route6', 'prefix,origin')
 Unrecognised = namedtuple('Unrecognised', 'key')
-
-# Action types
-ADD = namedtuple('ADD', '')
-DEL = namedtuple('DEL', '')

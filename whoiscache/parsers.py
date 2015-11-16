@@ -42,9 +42,9 @@ def read_act_serial(handle):
                 logging.info('recv: ' + line.strip())
             continue
         if line.startswith('ADD '):
-            return (T.ADD, line[4:].strip())
+            return ("ADD", line[4:].strip())
         elif line.startswith('DEL '):
-            return (T.DEL, line[4:].strip())
+            return ("DEL", line[4:].strip())
         else:
             raise ValueError("Unrecognised action: %s" % line)
 

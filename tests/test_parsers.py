@@ -36,9 +36,9 @@ class TestParsers(unittest.TestCase):
 
     def test_parse_radb_updates(self):
         expected = [
-            (T.ADD, '2393925',
+            ("ADD", '2393925',
              T.Macro(name='AS-HURRICANE', members=['AS-LAIX', 'AS-MEMSET', 'AS-VOCUS', 'AS-TPG', 'AS-JAPAN-TELECOM', 'AS4', 'AS5', 'AS10', 'AS16', 'AS17'])),
-            (T.DEL, '2393926',
+            ("DEL", '2393926',
              T.Route(prefix='42.116.22.0/24', origin='AS18403'))
         ]
         self._test_parser(parse_updates, 'radb.updates.sample', expected)

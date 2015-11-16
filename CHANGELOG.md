@@ -1,3 +1,7 @@
+0.3.1
+
+* Remove unneeded build steps
+
 0.3
 
 * Add support for building in Bamboo CI server

@@ -21,15 +21,15 @@ class WhoisCacheState(object):
         self.serial = serial
 
     def _update_macro(self, action, macro):
-        if action == T.ADD:
+        if action == "ADD":
             self.macros[macro.name] = set(macro.members)
-        elif action == T.DEL and macro.name in self.macros:
+        elif action == "DEL" and macro.name in self.macros:
             del self.macros[macro.name]
 
     def _update_route(self, action, route):
-        if action == T.ADD:
+        if action == "ADD":
             self.prefix4.setdefault(route.origin, set()).add(route.prefix)
-        elif action == T.DEL and route.origin in self.prefix4:
+        elif action == "DEL" and route.origin in self.prefix4:
             prefixes = self.prefix4[route.origin]
             prefixes.discard(route.prefix)
             if prefixes:
@@ -38,9 +38,9 @@ class WhoisCacheState(object):
                 del self.prefix4[route.origin]
 
     def _update_route6(self, action, route):
-        if action == T.ADD:
+        if action == "ADD":
             self.prefix6.setdefault(route.origin, set()).add(route.prefix)
-        elif action == T.DEL and route.origin in self.prefix6:
+        elif action == "DEL" and route.origin in self.prefix6:
             prefixes = self.prefix6[route.origin]
             prefixes.discard(route.prefix)
             if prefixes:

@@ -54,7 +54,7 @@ class WhoisCache(object):
         zcat = subprocess.Popen(['zcat', dump_path], -1, stdout=subprocess.PIPE)
         for record in long_thing("Loading dump",
                                  parsers.parse_dump(zcat.stdout)):
-            update = (T.ADD, serial, record)
+            update = ("ADD", serial, record)
             self.state.apply_update(update)
 
     def download_dump(self):
