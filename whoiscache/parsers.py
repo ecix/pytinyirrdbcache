@@ -40,13 +40,15 @@ def read_act_serial(handle):
         elif line[0] in {'%', '#', '\n'}:
             if line[0] == '%':
                 logging.info('recv: ' + line.strip())
+            if 'error' in line.lower():
+                raise ErrorResponse(line)
             continue
         if line.startswith('ADD '):
             return ("ADD", line[4:].strip())
         elif line.startswith('DEL '):
             return ("DEL", line[4:].strip())
         else:
-            raise ValueError("Unrecognised action: %s" % line)
+            raise ParseFailure("Cannot parse: %s" % line)
 
 
 def read_record(handle):
@@ -137,3 +139,11 @@ def block_lookup_many(block, key):
             val = re_strip_comment.sub('', val)
             lines.append(val)
     return lines
+
+
+class ParseFailure(ValueError):
+    pass
+
+
+class ErrorResponse(ValueError):
+    pass

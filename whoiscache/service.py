@@ -21,7 +21,6 @@ class WhoisCacheService(gevent.Greenlet):
         """
         try:
             for cache in self.caches.values():
-                cache.load()
                 cache.update()
         except Exception:
             self.state = "ERROR"

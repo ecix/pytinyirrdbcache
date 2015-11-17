@@ -1,4 +1,5 @@
 import cPickle as pickle
+import copy
 import gevent
 import logging
 import os
@@ -7,7 +8,7 @@ import socket
 import subprocess
 import time
 
-from whoiscache import parsers, settings, state, types as T
+from whoiscache import parsers, settings, state
 
 
 class WhoisCache(object):
@@ -27,30 +28,47 @@ class WhoisCache(object):
     def name(self):
         return self.config['name']
 
-    def load(self):
+    def update(self):
         """
-        Initialise the cache by loading from disk or downloading
-        remote dump.
+        All in one functon to restore and/or update and/or download state.
         """
-        if os.path.exists(self.cache_path):
-            self.logger.info("Restoring state from %s", self.cache_path)
-            self.state = pickle.load(open(self.cache_path))
-            self.logger.info("Loaded state@%s", self.state.serial)
-        else:
-            paths = self.download_dump()
-            self.load_dump(*paths)
-            self.save()
+        in_sync = False
+
+        if not self.state.serial:
+            if os.path.exists(self.cache_path):
+                self.logger.info("Restoring state from %s", self.cache_path)
+                self.state = pickle.load(open(self.cache_path))
+
+        if self.state.serial:
+            try:
+                self.update_telnet()
+                in_sync = True
+            except parsers.ErrorResponse as e:
+                self.logger.warning("Error in realtime update: %s" % e)
+
+        if not in_sync:
+            os.path.exists(self.cache_path) and os.unlink(self.cache_path)
+            clone = copy.copy(self)
+            clone.state = state.WhoisCacheState()
+            clone.update_dump()
+            self.state = clone.state
+
+        self.logger.info("Loaded state@%s", self.state.serial)
 
     def save(self):
         self.logger.info("Saving state@%s to %s", self.state.serial,
                          self.cache_path)
         pickle.dump(self.state, open(self.cache_path, 'w'))
 
-    def load_dump(self, serial_path, dump_path):
+    def update_dump(self):
+        """ Update state from dump """
+        serial, dump_path = self.download_dump()
+        if serial != self.state.serial:
+            self.load_dump(serial, dump_path)
+
+    def load_dump(self, serial, dump_path):
         """ Build the cache from a dump """
         self.logger.info("Loading dump at %s" % dump_path)
-        import pdb; pdb.set_trace()
-        serial = open(serial_path).read().strip()
         # Use zcat in separate process for speedup
         if dump_path.endswith('gz'):
             zcat = subprocess.Popen(['zcat', dump_path], -1,
@@ -61,6 +79,7 @@ class WhoisCache(object):
         for record in long_thing("Loading dump", parsers.parse_dump(fh)):
             update = ("ADD", serial, record)
             self.state.apply_update(update)
+        self.save()
 
     def download_dump(self):
         """ Download latest data dump and serial from upstream """
@@ -71,16 +90,19 @@ class WhoisCache(object):
                                    os.path.basename(self.config['serial_uri']))
         dump_path = os.path.join(dump_dir,
                                  os.path.basename(self.config['dump_uri']))
-        if not (os.path.exists(serial_path) and os.path.exists(dump_path)):
-            self.logger.info("Downloading %s", self.config['serial_uri'])
-            download_file(serial_path, self.config['serial_uri'])
+        existing_serial = None
+        have_serial, have_dump = map(os.path.exists, [serial_path, dump_path])
+        if have_serial and have_dump:
+            existing_dump_serial = open(serial_path).read().strip()
+        self.logger.info("Downloading %s", self.config['serial_uri'])
+        download_file(serial_path, self.config['serial_uri'])
+        new_serial = open(serial_path).read().strip()
+        if new_serial != existing_serial:
             self.logger.info("Downloading %s", self.config['dump_uri'])
             download_file(dump_path, self.config['dump_uri'])
-        else:
-            self.logger.info("Using already downloaded dump at %s" % dump_dir)
-        return (serial_path, dump_path)
+        return (new_serial, dump_path)
 
-    def update(self):
+    def update_telnet(self):
         """ Get latest updates from upstream telnet """
         sock = socket.socket()
         self.logger.info("Connecting to %s", self.config['telnet'])
@@ -103,6 +125,7 @@ class WhoisCache(object):
 
 def download_file(dest, uri):
     """ Download a file using CURL """
+    os.path.exists(dest) and os.unlink(dest)
     tmp = dest + '.part'
     cmd = 'curl -s -o "%s" "%s"' % (tmp, uri)
     logging.info('+ ' + cmd)
