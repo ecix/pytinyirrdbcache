@@ -6,10 +6,11 @@ import os
 import os.path
 import socket
 import subprocess
+import string
 import time
+import gzip
 
 from whoiscache import parsers, settings, state
-
 
 class WhoisCache(object):
     """
@@ -69,11 +70,8 @@ class WhoisCache(object):
     def load_dump(self, serial, dump_path):
         """ Build the cache from a dump """
         self.logger.info("Loading dump at %s" % dump_path)
-        # Use zcat in separate process for speedup
         if dump_path.endswith('gz'):
-            zcat = subprocess.Popen(['zcat', dump_path], -1,
-                                    stdout=subprocess.PIPE)
-            fh = zcat.stdout
+            fh = gzip.open(dump_path)
         else:
             fh = open(dump_path)
         for record in long_thing("Loading dump", parsers.parse_dump(fh)):
@@ -127,10 +125,10 @@ def download_file(dest, uri):
     """ Download a file using CURL """
     os.path.exists(dest) and os.unlink(dest)
     tmp = dest + '.part'
-    cmd = 'curl -s -o "%s" "%s"' % (tmp, uri)
-    logging.info('+ ' + cmd)
-    rc = os.system(cmd)
-    if rc != 0:
+    cmd = [ 'curl', '-s', '-o', tmp, uri]
+    logging.info('+ ' + string.join(cmd, ' '))
+    ret_val = subprocess.call(cmd)
+    if ret_val != 0:
         raise IOError("Command exited with %s: %s" % (rc, cmd))
     os.rename(tmp, dest)
 
