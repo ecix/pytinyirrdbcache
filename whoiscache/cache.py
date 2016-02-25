@@ -5,12 +5,24 @@ import logging
 import os
 import os.path
 import socket
+import shutil
 import subprocess
 import string
 import time
 import gzip
 
 from whoiscache import parsers, settings, state
+
+STATE_INITIALIZING = 'initializing'
+STATE_UPDATING = 'updating'
+STATE_READY = 'ready'
+STATE_ERROR = 'error'
+
+class CacheNotReady(Exception):
+    pass
+
+class CacheError(Exception):
+    pass
 
 class WhoisCache(object):
     """
@@ -21,6 +33,7 @@ class WhoisCache(object):
     def __init__(self, config):
         self.config = config
         self.state = state.WhoisCacheState()
+        self.ready = False
         self.logger = logging.root
         self.cache_path = os.path.join(settings.CACHE_DATA_DIRECTORY,
                                        "%s.cache" % self.config['name'])
@@ -28,6 +41,17 @@ class WhoisCache(object):
     @property
     def name(self):
         return self.config['name']
+
+    def load(self):
+        """
+        Load and unpack serialized cache state without any updating.
+        """
+        if os.path.exists(self.cache_path):
+            self.logger.info("Restoring state from %s", self.cache_path)
+            self.state = pickle.load(open(self.cache_path))
+            self.ready = True
+        else:
+            raise CacheNotReady()
 
     def update(self):
         """
@@ -39,11 +63,13 @@ class WhoisCache(object):
             if os.path.exists(self.cache_path):
                 self.logger.info("Restoring state from %s", self.cache_path)
                 self.state = pickle.load(open(self.cache_path))
+                self.ready = True
 
         if self.state.serial:
             try:
                 self.update_telnet()
                 in_sync = True
+                self.ready = True
             except parsers.ErrorResponse as e:
                 self.logger.warning("Error in realtime update: %s" % e)
 
@@ -53,13 +79,18 @@ class WhoisCache(object):
             clone.state = state.WhoisCacheState()
             clone.update_dump()
             self.state = clone.state
+            self.ready = True
 
         self.logger.info("Loaded state@%s", self.state.serial)
 
     def save(self):
         self.logger.info("Saving state@%s to %s", self.state.serial,
                          self.cache_path)
-        pickle.dump(self.state, open(self.cache_path, 'w'))
+        cache_tmp_path = self.cache_path + '.update'
+
+        # Dump cache to tmpfile, then overwrite state dump
+        pickle.dump(self.state, open(cache_tmp_path, 'w'))
+        shutil.move(cache_tmp_path, self.cache_path)
 
     def update_dump(self):
         """ Update state from dump """

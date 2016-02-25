@@ -1,8 +1,8 @@
 import cPickle as pickle
 import operator
+from datetime import datetime
 
 from whoiscache import types as T
-
 
 class WhoisCacheState(object):
     """
@@ -13,12 +13,14 @@ class WhoisCacheState(object):
         self.macros = {}
         self.prefix4 = {}
         self.prefix6 = {}
+        self.updated_at = False
 
     def apply_update(self, (action, serial, record)):
         typename = type(record).__name__.lower()
         method = getattr(self, "_update_" + typename)
         method(action, record)
         self.serial = serial
+        self.updated_at = datetime.now()
 
     def _update_macro(self, action, macro):
         if action == "ADD":

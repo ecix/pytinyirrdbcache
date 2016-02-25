@@ -1,9 +1,10 @@
 import flask
 import jinja2
 import json
+import logging
 
 from whoiscache.service import WhoisCacheApp
-from whoiscache import settings
+from whoiscache import settings, cache as C
 
 app = WhoisCacheApp("WhoisCache")
 
@@ -72,6 +73,21 @@ def cache_status(cache):
     return json200({'serial': cache.serial})
 cache_status.__doc__ = "Return status of cache"
 
+@app.route('/cache/<string:cache>/update')
+def cache_update(cache):
+    try:
+        app.service.update(cache)
+    except KeyError:
+        return flask.Response("No Such Cache", status=404)
+    except C.CacheNotReady:
+        return flask.Response("Cache Not Ready", status=503)
+    except:
+        logging.exception("something went wrong in update")
+        return flask.Response("Something went wrong", status=500)
+
+    return flask.Response("OK", status=200)
+
+cache_update.__doc__ = "Reloads the cache"
 
 @app.route('/cache/<string:cache>/dump')
 @app.uses_cache
