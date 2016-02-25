@@ -3,9 +3,19 @@ import jinja2
 import json
 
 from whoiscache.service import WhoisCacheApp
+from whoiscache import settings
 
 app = WhoisCacheApp("WhoisCache")
 
+index_tpl = jinja2.Template("""
+<h1>Whois Cache ({{version}})</h1>
+<p>Loaded caches: <b>{{ caches|join(', ') }}, ALL</b> (combined logical OR)</p>
+<table border=1>
+    {% for route in routes %}
+        <tr><td><pre>GET {{ route.path }}</pre></td>
+            <td><pre>{{ route.doc }}</pre></tr>
+    {% endfor %}
+</table>""")
 
 @app.route('/', methods=('GET',))
 def index():
@@ -17,18 +27,11 @@ def index():
                 'doc': getattr(app.view_functions[rule.endpoint], '__doc__')
             })
     routes.sort(key=lambda r: r['path'])
-    return index_tpl.render(routes=routes, caches=app.service.caches.keys())
+    return index_tpl.render(routes=routes,
+                            caches=app.service.caches.keys(),
+                            version=settings.VERSION)
 index.__doc__ = "This page"
 
-index_tpl = jinja2.Template("""
-<h1>Whois Cache</h1>
-<p>Loaded caches: <b>{{ caches|join(', ') }}, ALL</b> (combined logical OR)</p>
-<table border=1>
-    {% for route in routes %}
-        <tr><td><pre>GET {{ route.path }}</pre></td>
-            <td><pre>{{ route.doc }}</pre></tr>
-    {% endfor %}
-</table>""")
 
 
 def lookup(path, attr, doc):

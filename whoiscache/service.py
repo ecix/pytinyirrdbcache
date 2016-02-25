@@ -6,7 +6,6 @@ import time
 
 from whoiscache import cache as C, settings, state
 
-
 class WhoisCacheService(gevent.Greenlet):
     def __init__(self, upstreams):
         self.state = 'NASCENT'
