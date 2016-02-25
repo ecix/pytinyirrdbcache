@@ -1,6 +1,5 @@
 import flask
 import functools
-import gevent
 import logging
 import time
 
