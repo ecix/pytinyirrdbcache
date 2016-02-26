@@ -12,6 +12,10 @@ cd $APPDIR
 echo "[i] Initializing venv"
 ./bin/venv_init
 
+
+echo "[i] Loading virtualenv (venv)"
+source venv/bin/activate
+
 pip install -r requirements-test.txt
 
 nosetests -v --with-xunit --cover-erase --cover-inclusive --cover-html --cover-package=$SOURCE_DIR tests
