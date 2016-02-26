@@ -122,6 +122,7 @@ $(LOCAL_RPMS)/$(RPM): dist
 			etc/ opt/
 
 	# Get rpm from server
+	mkdir -p $(LOCAL_RPMS)
 	scp $(BUILD_SERVER):$(RPM) $(LOCAL_RPMS)/.
 
 
