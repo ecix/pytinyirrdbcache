@@ -6,7 +6,7 @@ set -e
 
 # Operate from base directory
 BASEDIR=$(dirname $0)
-APPDIR=$BASEDIR/../..
+APPDIR=$BASEDIR/../
 cd $APPDIR
 
 echo "[i] Initializing venv"
