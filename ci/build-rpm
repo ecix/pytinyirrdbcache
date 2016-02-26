@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#
+# CI build script
+# ---------------
+# 
+# Installs bower components and creates a 
+# freshly build RPM.
+#
+
+
+# Operate from base directory
+BASEDIR=$(dirname $0)
+APPDIR=$BASEDIR/../..
+cd $APPDIR
+
+echo "[i] Initializing venv"
+./bin/venv_init
+
+echo "[i] Clearing old build artifacts"
+rm -rf RPMS/
+mkdir -p RPMS/
+
+echo "[i] Building RPM"
+make local_rpm
+
