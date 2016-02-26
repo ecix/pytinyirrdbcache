@@ -115,7 +115,8 @@ $(LOCAL_RPMS)/$(RPM): dist
 		fpm -s dir -t rpm -n $(APP) -v $(VERSION) -C $(REMOTE_DIST)/$(DIST) \
 			--depends gcc \
 			--depends python-virtualenv \
-			--config-files /etc/ecix/ten.conf \
+			--config-files /etc/ecix/python/__init__.py \
+			--config-files /etc/ecix/python/settings_local_whoiscache.py \
 			--after-install $(REMOTE_DIST)/$(DIST)/after_install \
 			--before-install $(REMOTE_DIST)/$(DIST)/before_install \
 			etc/ opt/
