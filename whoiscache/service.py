@@ -2,6 +2,7 @@ import flask
 import functools
 import logging
 import time
+import requests
 
 from whoiscache import cache as C, settings, state
 
@@ -11,6 +12,27 @@ class WhoisCacheUpdateService():
         self.caches = {up['name']: C.WhoisCache(up)
                        for up in upstreams}
 
+    def notify_web_update(self, name):
+        """
+        Trigger web api update.
+        CAVEAT: This only works if there is just one web worker process.
+        """
+        url = "http://localhost:%d/cache/%s/update" % (
+            settings.HTTP_ENDPOINT[1], name,
+        )
+
+        try:
+            res = requests.get(url)
+        except:
+            logging.exception("Error while making cache update request")
+            return
+
+        if res.status_code is 200:
+            logging.info("Cache update c(%s) successfull: %s", name, res.text)
+        else:
+            logging.error("Update c(%s) unssuccessful: %s", name, res.text)
+
+
     def start(self):
         """
         Exceptions initialising the caches are fatal since without updating
@@ -19,6 +41,7 @@ class WhoisCacheUpdateService():
         try:
             for cache in self.caches.values():
                 cache.update()
+                self.notify_web_update(cache.name)
         except Exception:
             self.state = C.STATE_ERROR
             raise
@@ -32,8 +55,7 @@ class WhoisCacheUpdateService():
                 logging.info("Updating cache: %s", cache.name)
                 try:
                     cache.update()
-                    # notify web process:
-                    notify_web_update(cache.name)
+                    self.notify_web_update(cache.name)
 
                 except Exception:
                     logging.exception("Error updating cache: %s", cache.name)
