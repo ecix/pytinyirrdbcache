@@ -4,9 +4,13 @@ SOURCE_DIR=whoiscache
 
 set -e
 
-bin/venv_init
+# Operate from base directory
+BASEDIR=$(dirname $0)
+APPDIR=$BASEDIR/../..
+cd $APPDIR
 
-. venv/bin/activate
+echo "[i] Initializing venv"
+./bin/venv_init
 
 pip install -r requirements-test.txt
 
