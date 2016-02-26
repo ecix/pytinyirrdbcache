@@ -36,3 +36,4 @@ sloccount.sc
 /venv
 /data
 /settings_local_whoiscache.py
+/BUILD-RPM
