@@ -160,7 +160,7 @@ def download_file(dest, uri):
     logging.info('+ ' + string.join(cmd, ' '))
     ret_val = subprocess.call(cmd)
     if ret_val != 0:
-        raise IOError("Command exited with %s: %s" % (rc, cmd))
+        raise IOError("Command exited with %d: %s" % (ret_val, cmd))
     os.rename(tmp, dest)
 
 
