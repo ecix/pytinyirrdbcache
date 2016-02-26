@@ -38,7 +38,7 @@ APP_DIST=$(DIST)/opt/ecix/$(APP)
 
 LOCAL_RPMS=RPMS
 
-RPM=$(APP)-$(VERSION)-1.x86_64.rpm
+RPM=$(APP)-$(VERSION)-1.noarch.rpm
 
 all:
 	echo "Nothing to do"

@@ -3,5 +3,5 @@
 echo "Adding system user: whoiscache"
 useradd --system -d /opt/ecix/whoiscache whoiscache
 
-chown -R whioscache:whoiscache /opt/ecix/whoiscache
+chown -R whoiscache:whoiscache /opt/ecix/whoiscache
 
