@@ -1,7 +1,9 @@
 #!/bin/bash
 
+# Initialize virtualenv
+/opt/ecix/whoiscache/bin/venv_init
+
 echo "Adding system user: whoiscache"
 useradd --system -d /opt/ecix/whoiscache whoiscache
-
 chown -R whoiscache:whoiscache /opt/ecix/whoiscache
 
