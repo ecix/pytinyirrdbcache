@@ -74,7 +74,7 @@ class WhoisCache(object):
                 self.logger.warning("Error in realtime update: %s" % e)
 
         if not in_sync:
-            os.path.exists(self.cache_path) and os.unlink(self.cache_path)
+            # os.path.exists(self.cache_path) and os.unlink(self.cache_path)
             clone = copy.copy(self)
             clone.state = state.WhoisCacheState()
             clone.update_dump()

@@ -70,7 +70,7 @@ listing("prefixes/6", "prefix6", "List ASNs with ipv6 prefixes")
 @app.route('/cache/<string:cache>/status')
 @app.uses_cache
 def cache_status(cache):
-    return json200({'serial': cache.serial})
+    return json200({'serial': cache.serial, 'updated_at': cache.updated_at})
 cache_status.__doc__ = "Return status of cache"
 
 @app.route('/cache/<string:cache>/update')

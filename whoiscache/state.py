@@ -65,6 +65,8 @@ class CacheStateCombiner(object):
         self.prefix6 = CombinerDict(st.prefix6 for _, st in states)
         self.serial = ','.join("%s:%s" % (name, st.serial)
                                for (name, st) in states)
+        self.updated_at = ','.join("%s:%s" % (name, st.updated_at)
+            for (name, st) in states)
 
 
 class CombinerDict(object):
