@@ -78,6 +78,7 @@ dist: clean
 local_rpm: dist
 
 	fpm -s dir -t rpm -n $(APP) -v $(VERSION) -C $(DIST) \
+		--architecture noarch \
 		--depends gcc \
 		--depends python-virtualenv \
 		--config-files /etc/ecix/python/__init__.py \
@@ -113,6 +114,7 @@ $(LOCAL_RPMS)/$(RPM): dist
 
 	ssh $(BUILD_SERVER) -- \
 		fpm -s dir -t rpm -n $(APP) -v $(VERSION) -C $(REMOTE_DIST)/$(DIST) \
+			--architecture noarch \
 			--depends gcc \
 			--depends python-virtualenv \
 			--config-files /etc/ecix/python/__init__.py \
