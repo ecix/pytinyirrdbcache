@@ -32,6 +32,9 @@ class WhoisCacheUpdateService():
                 logging.info("Updating cache: %s", cache.name)
                 try:
                     cache.update()
+                    # notify web process:
+                    notify_web_update(cache.name)
+
                 except Exception:
                     logging.exception("Error updating cache: %s", cache.name)
 
