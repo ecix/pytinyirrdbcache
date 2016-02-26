@@ -63,6 +63,7 @@ dist: clean
 		--exclude $(DIST) \
 		--exclude $(LOCAL_RPMS) \
 		--exclude venv \
+		--exclude data \
 		--exclude *local* \
 		--exclude *.pid \
 		--exclude *.swp \
