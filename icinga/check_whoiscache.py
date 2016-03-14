@@ -17,7 +17,7 @@ from datetime import timedelta, datetime
 
 WHOISCACHE='http://whoiscache.ecix.net:8087'
 
-CACHE_MAX_AGE=timedelta(hours=24)
+CACHE_MAX_AGE=timedelta(hours=25)
 
 # === END CONFIG ===
 
@@ -36,7 +36,8 @@ def _fetch_status(whoiscache_url):
     Get whoiscache status
     """
     try:
-        res = requests.get(whoiscache_url + '/cache/ALL/status')
+        # Fetch server status. The response should be available within 10 seconds.
+        res = requests.get(whoiscache_url + '/cache/ALL/status', timeout=10)
         status = res.json()
     except:
         raise WhoiscacheDown()
