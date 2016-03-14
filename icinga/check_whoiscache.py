@@ -56,7 +56,8 @@ def _status_caches(status):
     Get parsed serial and update time for all caches.
     """
     try:
-        serials = dict([cache.split(':') for cache in status.get('serial').split(',')])
+        serials = dict([cache.split(':')
+                        for cache in status.get('serial').split(',')])
     except Exception as e:
         raise WhoiscacheStatusError("Could not parse serials: %s"%str(e))
 
