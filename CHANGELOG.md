@@ -1,3 +1,10 @@
+0.6.8
+* Fixed datetime json serialization issue
+
+0.6.1
+
+* Splitted whoiscache into worker and service
+
 0.3.1
 
 * Remove unneeded build steps
