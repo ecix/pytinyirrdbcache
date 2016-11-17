@@ -18,5 +18,5 @@ rm -rf RPMS/
 mkdir -p RPMS/
 
 echo "[i] Building RPM"
-make local_rpm
+make rpm
 

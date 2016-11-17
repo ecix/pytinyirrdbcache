@@ -1,10 +1,9 @@
-# Whois Cache
+# TinyIRRDBCache
 
-Web service to provide a JSON interface to upstream WHOIS providers
+Manages a local cache of various Internet Routing Registry Databases (IRRDs) for quick lookups.
+A tiny web service to provide a JSON interface to upstream WHOIS providers.
 
-## Development
-
-    make develop
+This is a rewrite of [ecix/tinyirrdbcache](https://github.com/ecix/tinyirrdbcache) in python.
 
 ## Testing
 
@@ -13,7 +12,10 @@ Web service to provide a JSON interface to upstream WHOIS providers
 
 ## Deployment
 
-    make srpm
+    make rpm 
+
+    make remote_rpm BUILD_SERVER=build-my-rpm.example.com
+
 
 ## See Also
 
