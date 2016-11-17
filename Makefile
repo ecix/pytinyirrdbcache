@@ -11,13 +11,7 @@
 APP=whoiscache
 
 # Remote RPM building server
-BUILD_SERVER=build-srpm.ecix.net
-
-# Testing server
-STAGING_SERVER=epix.dev.ecix.net
-
-# Remote RPM building server
-RPM_BUILD_SERVER=build.ecix.net
+BUILD_SERVER=''
 
 ### END CONFIGURATION ###
 #
@@ -27,7 +21,6 @@ RPM_BUILD_SERVER=build.ecix.net
 
 APP_VERSION=$(shell cat VERSION)
 VERSION=$(APP_VERSION)
-# _$(shell git rev-parse --short HEAD)
 
 # Distribution directory
 DIST=BUILD-RPM
@@ -43,8 +36,13 @@ RPM=$(APP)-$(VERSION)-1.noarch.rpm
 all:
 	echo "Nothing to do"
 
-rpm: $(LOCAL_RPMS)/$(RPM)
 
+build_server:
+ifeq ($(BUILD_SERVER), '')
+	$(error BUILD_SERVER not configured)
+endif
+
+remote_rpm: build_server $(LOCAL_RPMS)/$(RPM)
 
 dist: clean
 
@@ -76,7 +74,7 @@ dist: clean
 	cp -r deploy/* $(DIST)/.
 
 
-local_rpm: dist
+rpm: dist
 
 	fpm -s dir -t rpm -n $(APP) -v $(VERSION) -C $(DIST) \
 		--architecture noarch \
@@ -135,12 +133,6 @@ test:
 develop:
 	bin/venv_init
 	echo "Now activate the virtualenv by running: source venv/bin/activate"
-
-
-deploy_staging: $(LOCAL_RPMS)/$(RPM)
-	scp $(LOCAL_RPMS)/$(RPM) $(STAGING_SERVER):.
-	ssh -t $(STAGING_SERVER) -- sudo yum install $(RPM)
-
 
 clean:
 	find . -name "*.pyc" -exec rm {} \;
