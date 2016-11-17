@@ -2,10 +2,6 @@
 
 #
 # CI build script
-# ---------------
-# 
-# Installs bower components and creates a 
-# freshly build RPM.
 #
 
 
