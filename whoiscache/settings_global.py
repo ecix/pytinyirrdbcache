@@ -18,9 +18,9 @@ WHOIS_UPSTREAMS = {
     },
     'LEVEL3': {
         'name': "LEVEL3",
-        'serial_uri': 'ftp://ftp.radb.net/radb/dbase/LEVEL3.CURRENTSERIAL',
-        'dump_uri': 'ftp://ftp.radb.net/radb/dbase/level3.db.gz',
-        'telnet': ('rr.ntt.net', 43),
+        'serial_uri': 'ftp://rr.level3.net/pub/rr/LEVEL3.CURRENTSERIAL',
+        'dump_uri': 'ftp://rr.level3.net/pub/rr/level3.db.gz',
+        'telnet': ('rr.level3.net', 43),
     },
     'ARIN': {
         "name": "ARIN",
@@ -30,10 +30,10 @@ WHOIS_UPSTREAMS = {
     },
     'ALTDB': {
         'name': "ALTDB",
-        'serial_uri': 'ftp://ftp.radb.net/radb/dbase/ALTDB.CURRENTSERIAL',
-        'dump_uri': 'ftp://ftp.radb.net/radb/dbase/altdb.db.gz',
-        'telnet': ('rr.ntt.net', 43),
-    },
+        'serial_uri': 'ftp://ftp.altdb.net/pub/altdb/ALTDB.CURRENTSERIAL',
+        'dump_uri': 'ftp://ftp.altdb.net/pub/altdb/altdb.db.gz',
+        'telnet': ('whois.altdb.net', 43),
+    }
 }
 
 
