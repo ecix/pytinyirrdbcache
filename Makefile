@@ -128,7 +128,7 @@ $(LOCAL_RPMS)/$(RPM): dist
 
 
 test:
-	.env/bin/nosetests -s -v tests
+	pytest -v -s
 
 develop:
 	bin/venv_init
