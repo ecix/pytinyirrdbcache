@@ -1,6 +1,9 @@
+# Tmp files
 *.py[co]
 *.swp
 *.orig
+__pycache__/
+.cache/
 
 # Packages
 *.egg
