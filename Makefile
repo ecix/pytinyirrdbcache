@@ -33,8 +33,8 @@ LOCAL_RPMS=RPMS
 
 RPM=$(APP)-$(VERSION)-1.noarch.rpm
 
-all:
-	echo "Nothing to do"
+all: test
+	echo "Just running some tests"
 
 
 build_server:
