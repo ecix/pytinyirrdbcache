@@ -24,12 +24,43 @@ def parse_updates(handle):
     """
     Parse output from whois update stream
     """
+
+    header = read_header(handle)
+
     while True:
         act_serial = read_act_serial(handle)
         if not act_serial:
             break
         record = read_record(handle)
         yield act_serial + (record,)
+
+
+
+def parse_header(line):
+    """Extract header data"""
+    match = re.match(r'%START Version: (\d+) (\w+) (\d+)-(\d+)', line)
+    if not match:
+        return None
+
+    header = {
+        "version": int(match.group(1)),
+        "source": match.group(2),
+        "serials": (int(match.group(3)), int(match.group(4))),
+    }
+    return header
+
+
+def read_header(handle):
+    """Read START header for version, source and serial range"""
+    handle.seek(0) # Assert we are at the beginning of the file
+    while True:
+        line = handle.readline()
+        if line == None:
+            break
+        if line == '':
+            continue
+        if line.startswith('%START'):
+            return parse_header(line)
 
 
 def read_act_serial(handle):

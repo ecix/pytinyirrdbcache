@@ -1,0 +1,26 @@
+
+%START Version: 1 LEVEL3 767081-767082
+
+ADD
+
+as-set:     AS-HURRICANE
+descr:      HE.NET AS MACRO
+members:    AS-LAIX, AS-MEMSET, AS-VOCUS, AS-TPG, AS-JAPAN-TELECOM
+members:    AS4, AS5, AS10, AS16, AS17
+admin-c:    ML158
+tech-c:     Gary Shaver
+notify:     noc@he.net
+mnt-by:     HE-NOC
+changed:    mtindle@he.net 20150812
+source:     RADB
+
+DEL
+
+route:      42.116.22.0/24
+descr:      FPT Telecom
+origin:     AS18403
+mnt-by:     MAINT-AS18403
+changed:    netadmin@fpt.vn 20150812  #09:55:47Z
+source:     RADB
+
+%END LEVEL3
