@@ -20,7 +20,7 @@ WHOIS_UPSTREAMS = {
         'name': "LEVEL3",
         'serial_uri': 'ftp://rr.level3.net/pub/rr/LEVEL3.CURRENTSERIAL',
         'dump_uri': 'ftp://rr.level3.net/pub/rr/level3.db.gz',
-        'telnet': ('whois.radb.net', 43),
+        'telnet': ('rr.Level3.net', 43),
     },
     'ARIN': {
         "name": "ARIN",
@@ -35,6 +35,7 @@ WHOIS_UPSTREAMS = {
         'telnet': ('whois.altdb.net', 43),
     }
 }
+
 
 
 # Path to the cache data directory. Must exist.

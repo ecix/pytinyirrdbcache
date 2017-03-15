@@ -1,6 +1,7 @@
 import os.path
 
 from whoiscache.parsers import parse_dump, parse_updates
+from whoiscache import parsers
 from whoiscache import types as T
 
 def _resource_path(name):
@@ -65,3 +66,43 @@ def test_parse_radb_updates():
     ]
 
     _run_parser(parse_updates, 'radb.updates.sample', expected)
+
+
+def test_parse_update_headers():
+    """Parse update headers"""
+    expected = {
+        "version": 3,
+        "source": "radb",
+        "serials": (2393925, 2393950),
+    }
+    data = open(_resource_path('radb.updates.sample'))
+    result = parsers.read_header(data)
+    assert result == expected
+
+    expected = {
+        "version": 1,
+        "source": "LEVEL3",
+        "serials": (767081, 767082),
+    }
+    data = open(_resource_path('l3.updates.sample'))
+    result = parsers.read_header(data)
+    assert result == expected
+
+def test_level3_updates():
+    """
+    Level3 does not provide serials in commands like 'ADD' and
+    'DEL', so we have to mitigate this issue.
+    """
+    expected = [
+        ("ADD", "767081",
+         T.Macro(name='AS-HURRICANE',
+                 members=['AS-LAIX', 'AS-MEMSET', 'AS-VOCUS', 'AS-TPG',
+                          'AS-JAPAN-TELECOM', 'AS4', 'AS5', 'AS10', 'AS16',
+                          'AS17'])),
+         ("DEL", '767082',
+          T.Route(prefix='42.116.22.0/24',
+                  origin='AS18403'))
+
+    ]
+    _run_parser(parse_updates, 'l3.updates.sample', expected)
+
