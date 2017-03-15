@@ -54,7 +54,6 @@ def parse_header(line):
 
 def read_header(handle):
     """Read START header for version, source and serial range"""
-    handle.seek(0) # Assert we are at the beginning of the file
     while True:
         line = handle.readline()
         if line == None:
