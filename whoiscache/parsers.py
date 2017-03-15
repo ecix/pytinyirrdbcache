@@ -26,13 +26,15 @@ def parse_updates(handle):
     """
 
     header = read_header(handle)
+    current_serial = header['serials'][0]
 
     while True:
-        act_serial = read_act_serial(handle)
+        act_serial = read_act_serial(handle, current_serial)
         if not act_serial:
             break
         record = read_record(handle)
         yield act_serial + (record,)
+        current_serial += 1
 
 
 
@@ -63,7 +65,15 @@ def read_header(handle):
             return parse_header(line)
 
 
-def read_act_serial(handle):
+def parse_act_serial(line, fallback_serial=None):
+    """Extract serial from action line"""
+    serial = line[4:].strip()
+    if not serial and fallback_serial:
+        serial = str(fallback_serial)
+    return serial
+
+
+def read_act_serial(handle, fallback_serial=None):
     while True:
         line = handle.readline()
         if line == '':
@@ -74,10 +84,10 @@ def read_act_serial(handle):
             if 'error' in line.lower():
                 raise ErrorResponse(line)
             continue
-        if line.startswith('ADD '):
-            return ("ADD", line[4:].strip())
-        elif line.startswith('DEL '):
-            return ("DEL", line[4:].strip())
+        if line.startswith('ADD'):
+            return ("ADD", parse_act_serial(line, fallback_serial))
+        elif line.startswith('DEL'):
+            return ("DEL", parse_act_serial(line, fallback_serial))
         else:
             raise ParseFailure("Cannot parse: %s" % line)
 
