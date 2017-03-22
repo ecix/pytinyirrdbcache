@@ -54,15 +54,20 @@ def parse_header(line):
 
 def read_header(handle):
     """Read START header for version, source and serial range"""
+    watchdog = 10
     while True:
+        watchdog -= 1
         line = handle.readline()
+        if watchdog == 0:
+            raise ErrorResponse("Insufficient data")
         if line == None:
             break
         if line == '':
             continue
         if line.startswith('%START'):
             return parse_header(line)
-
+        if line.startswith('% ERROR') or line.startswith('%ERROR'):
+            raise ErrorResponse(line)
 
 def parse_act_serial(line, fallback_serial=None):
     """Extract serial from action line"""
