@@ -26,6 +26,10 @@ def parse_updates(handle):
     """
 
     header = read_header(handle)
+    if not header:
+        logging.info("Recevied no update header; skipping updates.")
+        return
+
     current_serial = header['serials'][0]
 
     while True:
@@ -54,20 +58,23 @@ def parse_header(line):
 
 def read_header(handle):
     """Read START header for version, source and serial range"""
-    watchdog = 10
+    watchdog = 3 # The header must occur in the first three lines of response
     while True:
-        watchdog -= 1
         line = handle.readline()
+        watchdog -= 1
         if watchdog == 0:
-            raise ErrorResponse("Insufficient data")
-        if line == None:
             break
+        if line == None:
+            continue
         if line == '':
             continue
+        if line.startswith('%END'):
+            break
         if line.startswith('%START'):
             return parse_header(line)
         if line.startswith('% ERROR') or line.startswith('%ERROR'):
             raise ErrorResponse(line)
+
 
 def parse_act_serial(line, fallback_serial=None):
     """Extract serial from action line"""
