@@ -56,9 +56,22 @@ def parse_header(line):
     return header
 
 
+def handle_error(line):
+    """Handle errors in response"""
+    tokens = line.split(':')
+    if len(tokens) < 2:
+        raise ErrorResponse("General Error")
+    code = int(tokens[1])
+    if code == 401:
+        raise OutOfSyncException()
+
+    # Otherwise this is just an error response
+    raise ErrorResponse(line)
+
+
 def read_header(handle):
     """Read START header for version, source and serial range"""
-    watchdog = 3 # The header must occur in the first three lines of response
+    watchdog = 5 # The header must occur in the first couple of lines
     while True:
         line = handle.readline()
         watchdog -= 1
@@ -73,7 +86,7 @@ def read_header(handle):
         if line.startswith('%START'):
             return parse_header(line)
         if line.startswith('% ERROR') or line.startswith('%ERROR'):
-            raise ErrorResponse(line)
+            handle_error(line)
 
 
 def parse_act_serial(line, fallback_serial=None):
@@ -196,6 +209,8 @@ def block_lookup_many(block, key):
 class ParseFailure(ValueError):
     pass
 
+class OutOfSyncException(Exception):
+    pass
 
 class ErrorResponse(ValueError):
     pass

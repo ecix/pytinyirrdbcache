@@ -70,6 +70,11 @@ class WhoisCache(object):
                 self.update_telnet()
                 in_sync = True
                 self.ready = True
+            except parsers.OutOfSyncException as e:
+                self.logger.warning("Near realtime updates out of sync.")
+                self.logger.warning("Downloading dump.")
+                in_sync = False
+                self.ready = False
             except parsers.ErrorResponse as e:
                 self.logger.warning("Error in realtime update: %s" % e)
 

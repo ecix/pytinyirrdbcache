@@ -1,5 +1,6 @@
 # Tmp files
 *.py[co]
+*.swo
 *.swp
 *.orig
 __pycache__/
