@@ -24,7 +24,7 @@ class WhoisCacheUpdateService():
         try:
             res = requests.get(url)
         except:
-            logging.exception("Error while making cache update request")
+            logging.error("Error while making cache update request")
             return
 
         if res.status_code is 200:

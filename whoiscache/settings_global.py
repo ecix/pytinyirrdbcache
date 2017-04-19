@@ -47,7 +47,7 @@ WHOIS_UPDATE_INTERVAL = 60
 
 HTTP_ENDPOINT = ('0.0.0.0', 8087)
 
-# Read server version 
+# Read server version
 try:
     version_file = open(os.path.join(BASE_DIR, 'VERSION'), 'r')
     VERSION = string.strip(version_file.read())
