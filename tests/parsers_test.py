@@ -1,8 +1,11 @@
 import os.path
 
+from StringIO import StringIO
+
 from whoiscache.parsers import parse_dump, parse_updates
 from whoiscache import parsers
 from whoiscache import types as T
+
 
 def _resource_path(name):
     return os.path.join(os.path.dirname(__file__), 'resources', name)
@@ -105,4 +108,42 @@ def test_level3_updates():
 
     ]
     _run_parser(parse_updates, 'l3.updates.sample', expected)
+
+
+
+def test_parse_headers():
+    """Test header parsing"""
+    arin_header = StringIO("""
+% The ARIN Database is subject to Terms and Conditions.
+% See http://www.arin.net/db/support/db-terms-conditions.pdf
+
+%START Version: 3 ARIN 66038-66844 FILTERED
+
+    """)
+
+    arin_expected = {
+        "version": 3,
+        "source": "ARIN",
+        "serials": (66038, 66844),
+    }
+
+    ripe_header = StringIO("""
+% The RIPE Database is subject to Terms and Conditions.
+% See http://www.ripe.net/db/support/db-terms-conditions.pdf
+
+%START Version: 3 RIPE 38325160-38325288
+
+    """)
+
+    ripe_expected = {
+        "version": 3,
+        "source": "RIPE",
+        "serials": (38325160, 38325288),
+    }
+
+    headers = [ripe_header, arin_header]
+    expected = [ripe_expected, arin_expected]
+
+    results = [parsers.read_header(h) for h in headers]
+    assert results == expected
 
