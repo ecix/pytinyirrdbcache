@@ -71,7 +71,7 @@ def handle_error(line):
 
 def read_header(handle):
     """Read START header for version, source and serial range"""
-    watchdog = 5 # The header must occur in the first couple of lines
+    watchdog = 6 # The header must occur in the first couple of lines
     while True:
         line = handle.readline()
         watchdog -= 1
