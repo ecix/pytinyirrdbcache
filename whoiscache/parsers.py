@@ -8,6 +8,25 @@ from whoiscache import types as T
 Parse data from WHOIS servers
 """
 
+class ParseFailure(ValueError):
+    pass
+
+class SerialRangeError(Exception):
+    """The requested update is out of range"""
+    def __init__(self, message, first, last):
+        self.first = first
+        self.last = last
+
+        super(SerialRangeError, self).__init__(message)
+
+class OutOfSyncError(Exception):
+    """Like serial error, but without serial range information"""
+    pass
+
+
+class ErrorResponse(ValueError):
+    pass
+
 
 def parse_dump(handle):
     """
@@ -41,7 +60,6 @@ def parse_updates(handle):
         current_serial += 1
 
 
-
 def parse_header(line):
     """Extract header data"""
     match = re.match(r'%START Version: (\d+) (\w+) (\d+)-(\d+)', line)
@@ -56,14 +74,45 @@ def parse_header(line):
     return header
 
 
+
+def handle_range_exception(error):
+    """
+    Parse exception message:
+
+    check if we are out of sync (e.g. too old)
+    or not within a desired range
+    """
+    # Match range " xxxx - yyyy "
+    match = re.match(r'.*?(\d+)\W?-\W?(\d+).*', error)
+    if not match:
+        raise OutOfSyncError(error) # Nothing we could do here
+    start = int(match.group(1))
+    end = int(match.group(2))
+    raise SerialRangeError(error, start, end)
+
+
+
+def match_invalid_range_error(line):
+    if re.match(r'.*ERROR.*(I|i)nvalid range.*', line):
+        handle_range_exception(line)
+    if re.match(r'.*ERROR.*serials.*don.t exist.*', line):
+        handle_range_exception(line)
+
+
 def handle_error(line):
     """Handle errors in response"""
-    tokens = line.split(':')
+    tokens = line.split(':', 3)
     if len(tokens) < 2:
         raise ErrorResponse("General Error")
-    code = int(tokens[1])
-    if code == 401:
-        raise OutOfSyncException()
+    try:
+        code = int(tokens[1])
+        if code == 401:
+            handle_range_exception(line)
+    except ValueError:
+        pass # We could not parse the error code,
+             # coming up next: Regex matching.
+
+    match_invalid_range_error(line)
 
     # Otherwise this is just an error response
     raise ErrorResponse(line)
@@ -206,11 +255,3 @@ def block_lookup_many(block, key):
     return lines
 
 
-class ParseFailure(ValueError):
-    pass
-
-class OutOfSyncException(Exception):
-    pass
-
-class ErrorResponse(ValueError):
-    pass
