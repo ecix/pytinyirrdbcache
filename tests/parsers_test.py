@@ -1,4 +1,7 @@
+import pytest
+
 import os.path
+
 
 from StringIO import StringIO
 
@@ -6,6 +9,9 @@ from whoiscache.parsers import parse_dump, parse_updates
 from whoiscache import parsers
 from whoiscache import types as T
 
+
+def _open_resource(name):
+    return open(_resource_path(name))
 
 def _resource_path(name):
     return os.path.join(os.path.dirname(__file__), 'resources', name)
@@ -111,6 +117,18 @@ def test_level3_updates():
 
 
 
+def test_range_error():
+    """Raise a range error"""
+    try:
+        raise parsers.SerialRangeError(
+            "%ERROR:401: invalid range: Not within 2278326-38325450",
+            52221,
+            1230000)
+    except parsers.SerialRangeError as e:
+        assert e.first == 52221
+        assert e.last == 1230000
+
+
 def test_parse_headers():
     """Test header parsing"""
     arin_header = StringIO("""
@@ -146,4 +164,31 @@ def test_parse_headers():
 
     results = [parsers.read_header(h) for h in headers]
     assert results == expected
+
+
+def test_handle_range_errors():
+    """Parse headers with range errors, check result"""
+    headers = [_open_resource('level3.header.rangeerror.sample'),
+               _open_resource('radb.header.rangeerror.sample'),
+               _open_resource('ripe.header.rangeerror.sample')]
+
+    ranges = [(789, 765562),
+              (789, 3339553),
+              (2278326, 38325450)]
+
+    for i, header in enumerate(headers):
+        with pytest.raises(parsers.SerialRangeError) as excinfo:
+            parsers.read_header(header)
+        # Check exception
+        err = excinfo.value
+        expected = ranges[i]
+        assert (err.first, err.last) == expected
+
+
+def test_handle_outofsync_errors():
+    """Like range error, but without range info"""
+    header = _open_resource('ripe.header.outofsync.sample')
+    with pytest.raises(parsers.OutOfSyncError):
+        parsers.read_header(header)
+
 
